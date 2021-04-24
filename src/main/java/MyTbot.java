@@ -27,16 +27,12 @@ public class MyTbot extends TelegramLongPollingBot {
     }
 
     @Override
-    public String getBotUsername() { return System.getenv("TBOT_USERNAME"); }
-    @Override
-    public String getBotToken() { return System.getenv("TBOT_TOKEN"); }
+    public String getBotUsername() {
+        return System.getenv("TBOT_USERNAME");
+    }
 
-    public static void main(String[] args) {
-        try {
-            TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
-            api.registerBot(new MyTbot());
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public String getBotToken() {
+        return System.getenv("TBOT_TOKEN");
     }
 }
