@@ -8,11 +8,19 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 public class MyTbot extends TelegramLongPollingBot {
+    /** MyTbot
+     *
+     * Basic-ass telegram bot, right now only has the one function.
+     * */
+
     public MyTbot(String cfgFile) throws IOException {
         pdfProcessor = new ArkPDFProcessor(cfgFile);
     }
+
     @Override
     public void onUpdateReceived(Update update) {
+        /** Just responds to a message with fund top holdings if it's a fund
+         * */
         SendMessage msg = new SendMessage();
         msg.setChatId(update.getMessage().getChatId().toString());
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -41,5 +49,6 @@ public class MyTbot extends TelegramLongPollingBot {
     public String getBotToken() {
         return System.getenv("TBOT_TOKEN");
     }
+
     private ArkPDFProcessor pdfProcessor;
 }
