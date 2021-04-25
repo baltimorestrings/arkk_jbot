@@ -44,10 +44,14 @@ public class ArkPDFProcessor {
             CloseableHttpResponse ret = http.execute(req);
             ret.getEntity().writeTo(inMemPDF);
             inMemPDF.close();
-            String pdfContents = pdfStripper.getText(PDDocument.load(inMemPDF.toByteArray()));
-            return Arrays.stream(pdfContents.split("\n")).filter(
-                    l -> (l.contains("As of") || l.matches("^[0-9]{1,2} .*"))
+            PDDocument doc = PDDocument.load(inMemPDF.toByteArray());
+            String pdfContents = pdfStripper.getText(doc);
+            String s =  Arrays.stream(pdfContents.split("\n")).filter(
+                    l -> (l.contains("As of") || l.matches("^1?[0-9] .*"))
             ).collect(Collectors.joining("\n"));
+            log.info(s);
+            doc.close();
+            return s;
 
         } catch (IOException e) {
             e.printStackTrace();
