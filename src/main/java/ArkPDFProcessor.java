@@ -8,7 +8,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.*;
 
 import java.util.*;
-import java.util.regex. *;
+import java.util.regex.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
