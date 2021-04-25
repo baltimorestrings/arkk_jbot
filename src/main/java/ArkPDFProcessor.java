@@ -42,9 +42,9 @@ public class ArkPDFProcessor {
             inMemPDF.close();
             PDDocument doc = PDDocument.load(inMemPDF.toByteArray());
             String pdfContents = pdfStripper.getText(doc);
-            String s =  Arrays.stream(pdfContents.split("\n")).filter(
-                    l -> (l.contains("As of") || l.matches("^1?[0-9] .*"))
-            ).collect(Collectors.joining("\n"));
+            String s =  Arrays.stream(pdfContents.split("\n"))
+                    .filter(l -> (l.contains("As of") || l.matches("^1?[0-9] .*")))
+                    .collect(Collectors.joining("\n"));
             log.info(s);
             doc.close();
             return s;
