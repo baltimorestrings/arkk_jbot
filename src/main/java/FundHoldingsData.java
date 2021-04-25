@@ -33,9 +33,6 @@ public class FundHoldingsData {
      * @param line the log line
      */
     public void addSecurityFromLogline(String line) {
-        /** Translates from the following format of line to a security:
-         *
-         * */
         String tokens[] = line.split(" ");
         Integer rank = Integer.valueOf(tokens[0]);
         Float weight = Float.valueOf(tokens[tokens.length - 1]);
