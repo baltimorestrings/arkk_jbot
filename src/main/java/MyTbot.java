@@ -8,12 +8,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 public class MyTbot extends TelegramLongPollingBot {
+    public MyTbot() {
+        pdfProcessor = new ArkPDFProcessor();
+    }
     @Override
     public void onUpdateReceived(Update update) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId(update.getMessage().getChatId().toString());
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage msg = new SendMessage();
-            msg.setChatId(update.getMessage().getChatId().toString());
-            msg.setText("Test thing");
+            String fund = update.getMessage().getText();
+            if (pdfProcessor.hasFund(fund)) {
+                msg.setText(pdfProcessor.getPDFFromURL(fund));
+            } else {
+                msg.setText("No fund with that name found.");
+            }
             try {
                 execute(msg);
             } catch (TelegramApiException e) {
@@ -33,4 +41,5 @@ public class MyTbot extends TelegramLongPollingBot {
     public String getBotToken() {
         return System.getenv("TBOT_TOKEN");
     }
+    private ArkPDFProcessor pdfProcessor;
 }
