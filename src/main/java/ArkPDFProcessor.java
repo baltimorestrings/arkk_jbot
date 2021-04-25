@@ -8,7 +8,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex. *;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -31,7 +31,7 @@ public class ArkPDFProcessor {
         }
         PDFUrls = (HashMap<String, String>) config.get("ARK_PDF_LOCATIONS");
     }
-    public String getPDFFromURL(String fund) {
+    public FundHoldingsData getPDFFromURL(String fund) {
         /** curls the PDF into a ByteArray, uses PDFbox to strip it to text and for now just returns top 20 holdings
          */
         try {
@@ -42,16 +42,23 @@ public class ArkPDFProcessor {
             inMemPDF.close();
             PDDocument doc = PDDocument.load(inMemPDF.toByteArray());
             String pdfContents = pdfStripper.getText(doc);
-            String s =  Arrays.stream(pdfContents.split("\n"))
-                    .filter(l -> (l.contains("As of") || l.matches("^1?[0-9] .*")))
-                    .collect(Collectors.joining("\n"));
-            log.info(s);
+            Pattern dateMatcher = Pattern.compile("As of ([0-9/]+)");
+            Matcher match = dateMatcher.matcher(pdfContents);
+            FundHoldingsData etfHoldings;
+            if (match.find())
+                etfHoldings = new FundHoldingsData(match.group(1));
+            else
+                throw new IOException("Bullshit PDF data found trying to process date");
+            Arrays.stream(pdfContents.split("\n"))
+                    .filter( l -> l.matches("^[0-9]{1,3} .*"))
+                    .forEach(etfHoldings::addSecurityFromLogline);
             doc.close();
-            return s;
+            return etfHoldings;
 
         } catch (IOException e) {
             // This should be handled higher up, or it should wait and retry again, then bubble up an Exc idk
-            e.printStackTrace();
+            log.error("Some IO shit went down trying to process PDF");
+            log.error(e.getMessage());
             System.exit(1);
         }
         return null;

@@ -26,7 +26,7 @@ public class MyTbot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String fund = update.getMessage().getText();
             if (pdfProcessor.hasFund(fund)) {
-                msg.setText(pdfProcessor.getPDFFromURL(fund));
+                System.out.println(pdfProcessor.getPDFFromURL(fund).toString());
             } else {
                 msg.setText("No fund with that name found.");
             }
