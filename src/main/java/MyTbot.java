@@ -7,18 +7,27 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
+/** MyTbot
+ *
+ * Basic-ass telegram bot, right now only has the one function.
+ * */
 public class MyTbot extends TelegramLongPollingBot {
-    /** MyTbot
-     *
-     * Basic-ass telegram bot, right now only has the one function.
-     * */
-
+    /**
+     * Just sets up our PDF processor
+     * @param cfgFile config file with fund url data
+     * @throws IOException if config file fails, bubble up the exception so the main app can handle comms
+     */
     public MyTbot(String cfgFile) throws IOException {
         pdfProcessor = new ArkPDFProcessor(cfgFile);
     }
 
-    @Override
-    public void onUpdateReceived(Update update) {
+    /**
+     * This function is called whenever bot receives a message.
+     *
+     * If it gets a valid fund name, it'll try to grab the latest PDF and process it
+     * @param update update info from bot API
+     */
+    @Override public void onUpdateReceived(Update update) {
         /** Just responds to a message with fund top holdings if it's a fund
          * */
         SendMessage msg = new SendMessage();
@@ -26,7 +35,7 @@ public class MyTbot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String fund = update.getMessage().getText();
             if (pdfProcessor.hasFund(fund)) {
-                System.out.println(pdfProcessor.getPDFFromURL(fund).toString());
+                pdfProcessor.getPDFFromURL(fund)
             } else {
                 msg.setText("No fund with that name found.");
             }
@@ -40,13 +49,19 @@ public class MyTbot extends TelegramLongPollingBot {
 
     }
 
-    @Override
-    public String getBotUsername() {
+    /**
+     * Needed for bot aPI stuff
+     * @return username
+     */
+    @Override public String getBotUsername() {
         return System.getenv("TBOT_USERNAME");
     }
 
-    @Override
-    public String getBotToken() {
+    /**
+     * Needed for bot aPI stuff
+     * @return @botfather token
+     */
+    @Override public String getBotToken() {
         return System.getenv("TBOT_TOKEN");
     }
 

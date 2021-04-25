@@ -14,13 +14,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+/**
+ * So I guess in java the comments go before the class? weird.
+ *
+ * ArkPDFProcessor loads a config file containing urls for all the ark funds.
+ *
+ * it handles pulling ARK holding info for all funds it supports and returning it in 
+ * a FundHoldingsData object format.
+ * */
 public class ArkPDFProcessor {
-    /** Takes in fund name, spits out data
+    /**
+     * Sets up the processor, loading config file data and stting up HttpClient
      *
-     * I should pick and learn a java commenting style
+     * @throws IOException if config file doesn't fit expected format.
+     *
+     * @param cfgFile String representing a .json holding ARK fund name and URL info
      */
     public ArkPDFProcessor(String cfgFile) throws IOException {
-        // init stuff, specifically the mapping of fund name to PDF location - pulled from cfg file
         log = LogManager.getLogger(ArkPDFProcessor.class);
         ObjectMapper o = new ObjectMapper();
         http = HttpClients.custom().setUserAgent("Mozilla/5.0 Firefox/26.0").build();
@@ -31,12 +41,20 @@ public class ArkPDFProcessor {
         }
         PDFUrls = (HashMap<String, String>) config.get("ARK_PDF_LOCATIONS");
     }
+
+    /**
+     * Takes a fund name, pulls PDF of the daily holdings report and processes it into a useful format
+     *
+     * TODO: move the error catching higher up so tbot can know if stuff failed and decide retry/bail
+     * 
+     * @param fund fund name EG "ARKK", "ARKG"
+     *
+     * @return FundHoldingsData object filled up if success, null if fund doesn't exit.
+     * */
     public FundHoldingsData getPDFFromURL(String fund) {
-        /** curls the PDF into a ByteArray, uses PDFbox to strip it to text and for now just returns top 20 holdings
-         */
+        ByteArrayOutputStream inMemPDF = new ByteArrayOutputStream();
+        HttpGet req = new HttpGet(PDFUrls.get(fund));
         try {
-            ByteArrayOutputStream inMemPDF = new ByteArrayOutputStream();
-            HttpGet req = new HttpGet(PDFUrls.get(fund));
             HttpResponse ret = http.execute(req);
             ret.getEntity().writeTo(inMemPDF);
             inMemPDF.close();
@@ -64,6 +82,12 @@ public class ArkPDFProcessor {
         return null;
     }
 
+    /**
+     * Checks for fund existence
+     * @param fund name of fund to check
+     *
+     * @return True/False based on it we have info for a fund with that name
+     * */
     public boolean hasFund(String fund) {
         return PDFUrls.containsKey(fund);
     }
