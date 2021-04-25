@@ -46,6 +46,7 @@ public class ArkPDFProcessor {
      * Takes a fund name, pulls PDF of the daily holdings report and processes it into a useful format
      *
      * TODO: move the error catching higher up so tbot can know if stuff failed and decide retry/bail
+     *       - right now it'll error out and bail if it finds any processing errors. This should go 
      * 
      * @param fund fund name EG "ARKK", "ARKG"
      *
