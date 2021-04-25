@@ -9,10 +9,16 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * main app entry point
+ *
+ * Just sets up our bot and runs it, handles any fatal errors and output and so on.
+ * */
 public class main {
+    /**
+     * stuff
+     * */
     public static void main(String[] args) {
-        /** Init block
-         */
         Logger log = LogManager.getLogger("main");
         MyTbot bot = null;
         try {
