@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 public class MyTbot extends TelegramLongPollingBot {
-    public MyTbot() {
-        pdfProcessor = new ArkPDFProcessor();
+    public MyTbot(String cfgFile) throws IOException {
+        pdfProcessor = new ArkPDFProcessor(cfgFile);
     }
     @Override
     public void onUpdateReceived(Update update) {
