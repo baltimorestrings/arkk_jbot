@@ -14,6 +14,9 @@ public class FundHoldingsData {
     }
 
     public void addSecurityFromLogline(String line) {
+        /** Translates from the following format of line to a security:
+         *   18   INTELLIA THERAPEUTICS INC NTLA 45826J105 5,384,487 401,682,730.20 1.70
+         * */
         String tokens[] = line.split(" ");
         Integer rank = Integer.valueOf(tokens[0]);
         Float weight = Float.valueOf(tokens[tokens.length - 1]);
